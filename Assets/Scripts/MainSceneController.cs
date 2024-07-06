@@ -11,8 +11,7 @@ public class MainSceneController : MonoBehaviour
 
 
     /* Start is called before the first frame update */
-    void Start()
-    {
+    void Start() {
         // Retrieve cards from spreadsheet if not already retrieved
         if(Card.cards == null)
             Card.RetrieveCards();
@@ -26,6 +25,9 @@ public class MainSceneController : MonoBehaviour
 
     /* Populates the ScrollView with tiles displaying all cards */
     private void PopulateScrollView() {
+
+        int timestampStart = System.DateTime.Now.Millisecond;
+
         float tileHeight = CardTilePrefab.GetComponent<RectTransform>().rect.height;
 
         // Add card GameObjects
@@ -35,6 +37,8 @@ public class MainSceneController : MonoBehaviour
             CardTile cardTile = cardTileObject.GetComponent<CardTile>();
             cardTile.SetCard(card);
         }
+
+        print($"TIME PopulateScrollView: {System.DateTime.Now.Millisecond - timestampStart}");
     }
 
     /* Navigates to another scene */

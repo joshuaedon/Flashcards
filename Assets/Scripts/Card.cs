@@ -9,20 +9,17 @@ public class Card
 {
     public static List<Card> cards;
 
-    public bool ab;
     public string aWord;
     public string bWord;
-    public DateTime abRevisionDate;
+    public DateTime revisionDate;
     public int abRevisionStep;
-    public DateTime baRevisionDate;
     public int baRevisionStep;
 
-    public Card(string aWord, string bWord, DateTime abRevisionDate, int abRevisionStep, DateTime baRevisionDate, int baRevisionStep) {
+    public Card(string aWord, string bWord, DateTime revisionDate, int abRevisionStep, int baRevisionStep) {
         this.aWord = aWord;
         this.bWord = bWord;
-        this.abRevisionDate = abRevisionDate;
+        this.revisionDate = revisionDate;
         this.abRevisionStep = abRevisionStep;
-        this.baRevisionDate = baRevisionDate;
         this.baRevisionStep = baRevisionStep;
     }
 
@@ -33,9 +30,8 @@ public class Card
     }
 
     public void SetDefaultStats() {
-        this.abRevisionDate = System.DateTime.Now;
+        this.revisionDate = System.DateTime.Now;
         this.abRevisionStep = Settings.startingRevisionStep;
-        this.baRevisionDate = System.DateTime.Now;
         this.baRevisionStep = Settings.startingRevisionStep;
     }
 
@@ -54,14 +50,16 @@ public class Card
             return;
 
         this.bWord = columnValues[1];
-        this.abRevisionDate = DateTime.Parse(columnValues[2]);
+        this.revisionDate = DateTime.Parse(columnValues[2]);
         this.abRevisionStep = Int32.Parse(columnValues[3]);
-        this.baRevisionDate = DateTime.Parse(columnValues[4]);
-        this.baRevisionStep = Int32.Parse(columnValues[5]);
+        this.baRevisionStep = Int32.Parse(columnValues[4]);
     }
 
     /* Creates a list of cards from the spreadsheet */
     public static void RetrieveCards() {
+        
+        int timestampStart = System.DateTime.Now.Millisecond;
+
         cards = new List<Card>();
 
         // Get the Arabic word dataset
@@ -85,16 +83,18 @@ public class Card
         }
 
         MonoBehaviour.print($"{cards.Count} cards retrieved");
+
+        MonoBehaviour.print($"TIME RetrieveCards: {System.DateTime.Now.Millisecond - timestampStart}");
     }
 
     public static void WriteCardsToCSV() {
         string csvFilePath = Path.Combine(Application.persistentDataPath, "Arabic.csv");
 
         using(StreamWriter writer = new StreamWriter(csvFilePath)) {
-            string csvContent = "English,Arabic,AB Revision Date,Ab Revision Step,BA Revision Date,BA Revision Step";
+            string csvContent = "English,Arabic,Revision Date,AB Revision Step,BA Revision Step";
 
             foreach(Card card in cards) {
-                csvContent += $"\n{card.aWord},{card.bWord},{card.abRevisionDate},{card.abRevisionStep},{card.baRevisionDate},{card.baRevisionStep}";
+                csvContent += $"\n{card.aWord},{card.bWord},{card.revisionDate},{card.abRevisionStep},{card.baRevisionStep}";
             }
 
             writer.WriteLine(csvContent);
